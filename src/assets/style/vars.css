@@ -1,0 +1,37 @@
+@layer base {
+  :root,
+  [data-theme='light'] {
+    --color-fg: 17 24 39;
+    --color-muted: 107 114 128;
+    --color-accent: 14 165 233;
+    --color-yellowish: 249 207 20;
+    --color-button: 242 242 242;
+    --color-global: 245 245 247;
+    --color-main: 255 255 255;
+    --color-secondary: 230 230 233;
+    --color-text-main: 255 255 255;
+  }
+
+  [data-theme='dark'] {
+    --color-fg: 241 245 249;
+    --color-muted: 148 163 184;
+    --color-accent: 99 102 241;
+    --color-yellowish: 249 207 20;
+    --color-button: 54 52 59;
+    --color-secondary: 39 37 47;
+    --color-global: 33 31 38;
+    --color-main: 43 41 48;
+    --color-text-main: 0 0 0;
+  }
+
+  [data-theme='blue'] {
+    --color-fg: 15 23 42;
+    --color-muted: 71 85 105;
+    --color-accent: 30 64 175;
+    --color-button: 61 95 149;
+    --color-global: 223 235 250;
+    --color-main: 236 243 253;
+    --color-secondary: 198 219 245;
+    --color-text-main: 255 255 255;
+  }
+}
