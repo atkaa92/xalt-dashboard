@@ -8,20 +8,20 @@
     </div>
 
     <div class="w-3/4 flex flex-wrap justify-end items-center gap-2">
-      <RoundedButton
+      <BaseButton
         v-for="(label, idx) in project.buttons"
         :key="idx"
         class="flex flex-wrap justify-end items-center gap-2"
         :class="label === 'Copy Viewer Link' ? 'text-[#b69df8]' : 'text-yellowish'"
       >
         <Copy @click="copy" :size="14" v-if="label === 'Copy Viewer Link'" /> {{ label }}
-      </RoundedButton>
+      </BaseButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import RoundedButton from '@/components/ui/RoundedButton.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 import { useToaster } from '@/composables/useToaster';
 import type { ProjectItem } from '@/utilities/types';
 import { Copy } from 'lucide-vue-next';

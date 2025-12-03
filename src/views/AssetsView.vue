@@ -1,10 +1,16 @@
 <template>
-  <div v-if="loading">Loading users...</div>
+  <BaseButton
+    @click="handleAddAsset"
+    class="flex flex-wrap justify-end items-center gap-2 text-yellowish mb-3"
+  >
+    Add Asset
+  </BaseButton>
+  <div v-if="loading">Loading events...</div>
   <div v-else-if="error" class="text-red-500">{{ error }}</div>
   <Table
-    v-if="users.length"
+    v-if="events.length"
     :columns="columns"
-    :rows="users"
+    :rows="events"
     :initial-sort="{ key: 'id', dir: 'asc' }"
     row-key-field="id"
   >
@@ -17,14 +23,17 @@
 </template>
 
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue';
 import Table from '@/components/ui/Table.vue';
-import { useUserStore } from '@/stores/user';
+import { useEventsStore } from '@/stores/event.ts';
 import type { Column } from '@/utilities/types';
 import { storeToRefs } from 'pinia';
 import { onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
+const store = useEventsStore();
+const router = useRouter();
+const { events, loading, error } = storeToRefs(store);
 
-const store = useUserStore();
-const { users, loading, error } = storeToRefs(store);
 const columns: Column[] = [
   {
     key: 'id',
@@ -32,11 +41,14 @@ const columns: Column[] = [
     align: 'start',
     noWrap: true,
   },
-  { key: 'name', label: 'Name', width: '65%' },
-  { key: 'email', label: 'E-mail', width: '65%' },
-  { key: 'phone', label: 'Phone', width: '65%', noWrap: true },
+  { key: 'title', label: 'Name', width: '65%' },
+  { key: 'userId', label: 'User_ID', width: '5%', align: 'center' },
 ];
 
-onMounted(() => store.fetchUsers());
+const handleAddAsset = async () => {
+  router.push('/add-assets');
+};
+
+onMounted(() => store.fetchEvents());
 onUnmounted(() => store.reset());
 </script>

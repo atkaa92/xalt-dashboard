@@ -17,7 +17,7 @@ export interface NavItem {
 export interface Event {
   id: number;
   userId: number;
-  title: string;
+  name: string;
 }
 
 export interface User {
