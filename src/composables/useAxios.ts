@@ -20,6 +20,7 @@ export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) 
         ...options,
       });
       data.value = response.data;
+      return response.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
         error.value = err.response?.data?.message || err.message;
@@ -31,5 +32,28 @@ export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) 
     }
   }
 
-  return { data, error, loading, fetchData };
+  async function postData<U>(
+    body: U,
+    path: string = initialPath || '',
+    config?: AxiosRequestConfig,
+  ) {
+    if (!path) throw new Error('No URL provided');
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await axios.post<T>(`${BASE_URL}${path}`, body, { ...options, ...config });
+      return response.data;
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        error.value = err.response?.data?.message || err.message;
+      } else {
+        error.value = (err as Error).message;
+      }
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  return { data, error, loading, fetchData, postData };
 }
