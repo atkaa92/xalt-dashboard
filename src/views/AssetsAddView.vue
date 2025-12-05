@@ -1,3 +1,8 @@
+<script setup lang="ts">
+import ImageOverlayCreator from '@/components/overlays/ImageOverlayCreator.vue';
+
+</script>
+
 <template>
-  <section class="grid grid-cols-1 gap-4">Add Assets</section>
+  <ImageOverlayCreator></ImageOverlayCreator>
 </template>
