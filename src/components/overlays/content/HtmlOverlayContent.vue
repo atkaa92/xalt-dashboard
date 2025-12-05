@@ -1,11 +1,10 @@
 <template>
-  <div ref="shadowHost" class="shadow-host-wrapper">
-    </div>
+  <div ref="shadowHost" class="w-full h-full"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
-import type { HtmlContent } from '../../../utilities/types';
+import type { HtmlContent } from '@/utilities/types';
+import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
   htmlContent: HtmlContent;
@@ -14,7 +13,6 @@ const props = defineProps<{
 const shadowHost = ref<HTMLDivElement | null>(null);
 
 watch(() => props.htmlContent, renderShadowDom, { deep: true });
-onMounted(() => { renderShadowDom(); });
 
 function renderShadowDom() {
   if (!shadowHost.value) return;
@@ -39,17 +37,15 @@ function renderShadowDom() {
   // Inject Script (JS)
   if (props.htmlContent.js) {
     try {
-        new Function(props.htmlContent.js)();
+      new Function(props.htmlContent.js)();
     } catch (e) {
-        console.error("Error executing overlay JS:", e);
+      // eslint-disable-next-line no-console
+      console.error('Error executing overlay JS:', e);
     }
   }
 }
-</script>
 
-<style scoped>
-.shadow-host-wrapper {
-  width: 100%;
-  height: 100%;
-}
-</style>
+onMounted(() => {
+  renderShadowDom();
+});
+</script>
