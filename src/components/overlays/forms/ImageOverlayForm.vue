@@ -1,15 +1,26 @@
 <template>
-  <h4>Image Settings</h4>
-  <div class="drop-area" @dragover.prevent @drop="handleDrop" @click="openFileInput">
-    <input
-      type="file"
-      ref="fileInput"
-      @change="handleFileChange"
-      accept="image/*"
-      style="display: none"
-    />
-    <p>Click to **CHOOSE IMAGE** or **DRAG & DROP**</p>
-    <p v-if="isActive">✅ Image loaded for preview.</p>
+  <div>
+    <h4 class="text-sm font-semibold text-fg mb-2">Image Settings</h4>
+    <div
+      class="border-2 border-dashed border-global rounded-lg p-8 text-center cursor-pointer hover:bg-main hover:border-blue-500 transition-colors"
+      @dragover.prevent
+      @drop="handleDrop"
+      @click="openFileInput"
+    >
+      <input
+        type="file"
+        ref="fileInput"
+        @change="handleFileChange"
+        accept="image/*"
+        style="display: none"
+      />
+      <div class="space-y-2">
+        <p class="text-fg font-medium">Click to choose image or drag & drop</p>
+        <p v-if="isActive" class="text-emerald-500 text-sm font-semibold">
+          ✅ Image loaded for preview
+        </p>
+      </div>
+    </div>
   </div>
 </template>
 

@@ -1,18 +1,19 @@
 <template>
-  <div class="flex gap-5 p-5 bg-gray-100 min-h-screen">
-    <div class="flex-shrink-0 w-[300px]">
-      <div class="p-5 bg-white rounded-lg shadow-md">
-        <h3 class="mb-4 text-lg font-semibold">✨ Create New Overlay</h3>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Sidebar Controls -->
+    <div class="lg:col-span-1">
+      <div class="p-6 bg-secondary rounded-xl shadow-sm border border-global">
+        <h3 class="mb-6 text-lg font-semibold text-fg">✨ Create New Overlay</h3>
 
-        <div class="mb-4">
-          <label for="overlay-selector" class="block mb-1 font-semibold">
-            Select Overlay Type:
+        <div class="mb-6">
+          <label for="overlay-selector" class="mb-2 block text-sm font-medium text-fg">
+            Select Overlay Type
           </label>
           <select
             id="overlay-selector"
             :value="selectedType"
             @change="selectType(($event.target as HTMLSelectElement).value as OverlayType)"
-            class="w-full box-border px-2 py-2 border border-gray-300 rounded cursor-pointer bg-white text-gray-800"
+            class="w-full rounded-lg border border-global bg-main px-3 py-2 text-sm text-fg outline-none transition focus:border-blue-500 cursor-pointer"
           >
             <option :value="null" disabled>-- Choose Type --</option>
             <option value="image">🖼️ Image Overlay</option>
@@ -21,9 +22,9 @@
           </select>
         </div>
 
-        <hr class="my-4 border-gray-200" />
+        <hr class="my-6 border-global" />
 
-        <div class="space-y-4" v-if="selectedType">
+        <div class="space-y-6" v-if="selectedType">
           <ImageOverlayForm
             v-if="selectedType === 'image'"
             :is-active="overlay.type === 'image'"
@@ -41,86 +42,73 @@
           />
         </div>
 
-        <div class="mt-4" v-if="overlay.type">
-          <hr class="mb-4 border-gray-200" />
-          <h4 class="mb-3 text-base font-semibold">Overlay Position &amp; Size</h4>
+        <div class="mt-6" v-if="overlay.type">
+          <hr class="mb-6 border-global" />
+          <h4 class="mb-4 text-base font-semibold text-fg">Overlay Position & Size</h4>
 
           <div class="mb-4">
-            <label for="overlay-width" class="block mb-1 font-semibold"> Width (%) </label>
-            <input
-              id="overlay-width"
+            <BaseInput
+              label="Width (%)"
               type="number"
               v-model="overlayWidth"
               min="5"
               max="100"
               step="0.01"
-              class="w-full box-border px-2 py-2 border border-gray-300 rounded"
             />
           </div>
 
-          <div class="mb-4" v-if="overlay.type !== 'image'">
-            <label for="overlay-height" class="block mb-1 font-semibold"> Height (%) </label>
-            <input
-              id="overlay-height"
+          <div class="mb-6" v-if="overlay.type !== 'image'">
+            <BaseInput
+              label="Height (%)"
               type="number"
               v-model="overlayHeight"
               min="5"
               max="100"
               step="0.01"
-              class="w-full box-border px-2 py-2 border border-gray-300 rounded"
             />
           </div>
-          <p v-else class="text-sm text-gray-500">Image height is locked to 'auto'.</p>
+          <p v-else class="text-sm text-gray-500 mb-6">Image height is locked to 'auto'.</p>
 
-          <button
-            @click="resetOverlay"
-            class="w-full mt-4 px-4 py-2 bg-red-600 text-white font-bold rounded cursor-pointer hover:bg-red-700 transition-colors"
-          >
+          <BaseButton @click="resetOverlay" class="w-full bg-red-600 hover:bg-red-700 text-white">
             Clear Active Overlay
-          </button>
+          </BaseButton>
         </div>
       </div>
     </div>
 
-    <div class="flex-1 flex justify-center">
-      <div class="flex flex-col items-center w-full max-w-[900px]">
-        <h2 class="mb-4 text-lg font-semibold tracking-wide text-gray-700">
-          PREVIEW SCREEN (16:9)
-        </h2>
+    <!-- Preview Area -->
+    <div class="lg:col-span-2 flex flex-col items-center">
+      <h2 class="mb-4 text-lg font-semibold tracking-wide text-fg">PREVIEW SCREEN (16:9)</h2>
 
+      <div
+        ref="previewContainer"
+        class="relative w-full max-w-[800px] aspect-video bg-gray-200 border-4 border-slate-700 overflow-hidden mb-6 rounded-lg shadow-inner"
+      >
         <div
-          ref="previewContainer"
-          class="relative w-[800px] h-[450px] bg-gray-200 border-4 border-slate-700 overflow-hidden mb-4"
+          class="w-full h-full flex items-center justify-center bg-gray-400 text-slate-700 text-xl font-semibold"
         >
-          <div
-            class="w-full h-full flex items-center justify-center bg-gray-400 text-slate-700 text-xl font-semibold"
-          >
-            <p>16:9 Video/Browser Area</p>
-          </div>
-
-          <DraggableWrapper
-            v-if="overlay.type"
-            :overlay="overlay"
-            :container-dimensions="containerDimensions"
-            @update:style="updateOverlayStyle"
-          >
-            <OverlayContentRenderer :overlay="overlay" />
-          </DraggableWrapper>
+          <p>16:9 Video/Browser Area</p>
         </div>
 
-        <div class="flex items-center gap-3">
-          <button
-            class="px-4 py-2 bg-emerald-500 text-white font-bold rounded shadow-sm hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="!overlay.type"
-          >
-            SAVE OVERLAY
-          </button>
-          <button
-            class="px-4 py-2 bg-gray-400 text-gray-800 font-bold rounded shadow-sm hover:bg-gray-500 transition-colors"
-          >
-            CANCEL
-          </button>
-        </div>
+        <DraggableWrapper
+          v-if="overlay.type"
+          :overlay="overlay"
+          :container-dimensions="containerDimensions"
+          @update:style="updateOverlayStyle"
+        >
+          <OverlayContentRenderer :overlay="overlay" />
+        </DraggableWrapper>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <BaseButton
+          @click="saveOverlay"
+          class="bg-emerald-500 hover:bg-emerald-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          :disabled="!overlay.type"
+        >
+          SAVE OVERLAY
+        </BaseButton>
+        <BaseButton class="bg-gray-400 hover:bg-gray-500 text-gray-800"> CANCEL </BaseButton>
       </div>
     </div>
   </div>
@@ -132,6 +120,8 @@ import HtmlOverlayForm from '@/components/overlays/forms/HtmlOverlayForm.vue';
 import ImageOverlayForm from '@/components/overlays/forms/ImageOverlayForm.vue';
 import VideoOverlayForm from '@/components/overlays/forms/VideoOverlayForm.vue';
 import OverlayContentRenderer from '@/components/overlays/OverlayContentRenderer.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
+import BaseInput from '@/components/ui/BaseInput.vue';
 import type {
   ContainerDimensions,
   HtmlContent,
@@ -220,6 +210,21 @@ const handleOverlayCreation = (payload: {
 
 const updateOverlayStyle = (newStyles: Partial<OverlayStyle>) => {
   Object.assign(overlay.style, newStyles);
+};
+
+const saveOverlay = () => {
+  if (!overlay.type) return;
+
+  const payload = {
+    type: overlay.type,
+    content: overlay.content,
+    style: { ...overlay.style },
+    htmlContent: overlay.type === 'html' ? { ...overlay.htmlContent } : undefined,
+    containerDimensions: { ...containerDimensions },
+  };
+
+  // eslint-disable-next-line no-console
+  console.log('📦 Overlay Save Payload:', payload);
 };
 
 const resetOverlay = () => {

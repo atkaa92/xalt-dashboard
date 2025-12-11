@@ -47,12 +47,6 @@
           >
             {{ opt.label }}
           </li>
-          <li
-            @click="themeDropdownOpen = false"
-            class="px-4 py-2 text-sm hover:bg-accent/10 cursor-pointer"
-          >
-            <RouterLink to="/auth/login">LogOut</RouterLink>
-          </li>
         </ul>
       </Transition>
     </div>

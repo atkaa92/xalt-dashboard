@@ -1,17 +1,26 @@
 <template>
-  <h4>Video Settings</h4>
-  <div class="input-group">
-    <label>Video File (.mp4, .webm)</label>
-    <div class="drop-area video-drop-area" @click="openVideoFileInput">
-      <input
-        type="file"
-        ref="videoFileInput"
-        @change="handleVideoFileChange"
-        accept="video/*"
-        style="display: none"
-      />
-      <p>Click to **CHOOSE VIDEO**</p>
-      <p v-if="isActive">✅ Video loaded for preview.</p>
+  <div>
+    <h4 class="text-sm font-semibold text-fg mb-2">Video Settings</h4>
+    <div class="mb-2">
+      <label class="block text-sm text-gray-500 mb-1">Video File (.mp4, .webm)</label>
+      <div
+        class="border-2 border-dashed border-global rounded-lg p-8 text-center cursor-pointer hover:bg-main hover:border-blue-500 transition-colors"
+        @click="openVideoFileInput"
+      >
+        <input
+          type="file"
+          ref="videoFileInput"
+          @change="handleVideoFileChange"
+          accept="video/*"
+          style="display: none"
+        />
+        <div class="space-y-2">
+          <p class="text-fg font-medium">Click to choose video</p>
+          <p v-if="isActive" class="text-emerald-500 text-sm font-semibold">
+            ✅ Video loaded for preview
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>

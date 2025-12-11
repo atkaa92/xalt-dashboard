@@ -1,5 +1,11 @@
 <template>
-  <img :src="content || ''" alt="Overlay Image" class="w-full h-auto block" />
+  <video
+    :src="content || ''"
+    controls
+    autoplay
+    loop
+    class="w-full h-full object-cover block"
+  ></video>
 </template>
 
 <script setup lang="ts">

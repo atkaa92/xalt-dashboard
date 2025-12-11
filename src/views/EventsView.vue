@@ -46,20 +46,20 @@
       <BaseInput v-model="name" label="Name" type="text" />
     </div>
     <template #footer>
-      <button
-        class="rounded-lg border border-gray-500 px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
+      <BaseButton
+        class="border border-gray-500 bg-transparent text-gray-200 hover:bg-gray-700"
         @click="closeAdd"
       >
         Cancel
-      </button>
-      <button
-        class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
+      </BaseButton>
+      <BaseButton
+        class="bg-blue-600 text-white hover:bg-blue-500 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
         :disabled="loading"
         @click="handleAddEvent"
       >
         <LoaderCircle v-if="loading" class="animate-spin" />
         Confirm
-      </button>
+      </BaseButton>
     </template>
   </BaseModal>
 
@@ -129,7 +129,11 @@ const columns: Column[] = [
 ];
 
 const handleAddEvent = async () => {
-  await store.postEvents({ name: name.value, userId: 123 });
+  const payload = { name: name.value, userId: 123 };
+  // eslint-disable-next-line no-console
+  console.log('📦 Event Save Payload:', payload);
+
+  await store.postEvents(payload);
   name.value = '';
   addToasterItem('Event has been added successfully.', 'success');
   closeAdd();
