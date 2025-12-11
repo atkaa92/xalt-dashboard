@@ -18,13 +18,19 @@ export interface Event {
   id: number;
   userId: number;
   name: string;
+  additionalAttributes?: Record<string, string>;
 }
 
 export interface User {
   id: number;
   name: string;
   email: string;
-  phone: string;
+  phone?: string;
+  firstName?: string;
+  lastName?: string;
+  role?: string;
+  subdomain?: string;
+  subdomainId?: number;
 }
 
 export interface Column {

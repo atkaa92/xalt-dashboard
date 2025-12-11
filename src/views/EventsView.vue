@@ -108,7 +108,7 @@ import { useEventsStore } from '@/stores/event.ts';
 import type { Column, Event } from '@/utilities/types';
 import { LoaderCircle, Settings2, Trash } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { ref } from 'vue';
 
 const { addToasterItem } = useToaster();
 const store = useEventsStore();
@@ -129,14 +129,27 @@ const columns: Column[] = [
 ];
 
 const handleAddEvent = async () => {
-  const payload = { name: name.value, userId: 123 };
-  // eslint-disable-next-line no-console
-  console.log('📦 Event Save Payload:', payload);
+  try {
+    const payload = {
+      name: name.value,
+      additionalAttributes: {
+        theme: 'Tropical',
+        maxGuests: '500',
+      },
+    };
 
-  await store.postEvents(payload);
-  name.value = '';
-  addToasterItem('Event has been added successfully.', 'success');
-  closeAdd();
+    await store.createEvent(payload);
+
+    if (error.value) {
+      throw new Error(error.value);
+    }
+
+    name.value = '';
+    addToasterItem('Event has been added successfully.', 'success');
+    closeAdd();
+  } catch (err) {
+    addToasterItem((err as Error).message || 'Failed to add event', 'error');
+  }
 };
 
 const openDeleteEvent = (row: unknown) => {
@@ -154,6 +167,6 @@ const handleDeleteEvent = async () => {
   addToasterItem('Event has been deleted successfully.', 'success');
 };
 
-onMounted(() => store.fetchEvents());
-onUnmounted(() => store.reset());
+// onMounted(() => store.fetchEvents());
+// onUnmounted(() => store.reset());
 </script>

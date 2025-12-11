@@ -2,7 +2,7 @@ import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { ref } from 'vue';
 
-const BASE_URL = 'https://jsonplaceholder.typicode.com';
+const BASE_URL = 'http://eurosport.localhost:5001';
 
 export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) {
   const data = ref<T | null>(null);

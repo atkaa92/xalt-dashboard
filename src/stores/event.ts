@@ -2,6 +2,7 @@ import { useAxios } from '@/composables/useAxios';
 import type { Event } from '@/utilities/types';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import { useAuthStore } from './auth';
 
 export const useEventsStore = defineStore('event', () => {
   // state
@@ -30,12 +31,40 @@ export const useEventsStore = defineStore('event', () => {
     loading.value = false;
   }
 
-  async function postEvents(data: Partial<Event>) {
+  async function createEvent(eventData: {
+    name: string;
+    additionalAttributes: Record<string, string>;
+  }) {
     loading.value = true;
     error.value = null;
 
-    const req = useAxios<Event[]>('/albums');
-    await req.postData<Partial<Event>>(data);
+    const authStore = useAuthStore();
+    const user = authStore.user;
+
+    const payload = {
+      ...eventData,
+      additionalAttributes: {
+        ...eventData.additionalAttributes,
+        creator: user
+          ? {
+              id: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+            }
+          : null,
+      },
+    };
+
+    const req = useAxios<Event>('/api/events');
+    // const token = authStore.token;
+    const token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzY1NDg0MjgyLCJleHAiOjE3NjYwODkwODJ9.O4-Cpbgzc5edwi4jPGgTw-JGblbVHwo_Y5fURzBenjs';
+    await req.postData(payload, undefined, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     if (req.error.value) {
       error.value = req.error.value;
@@ -70,7 +99,7 @@ export const useEventsStore = defineStore('event', () => {
   // exported
   const values = { events, loading, error };
   const getters = { getEventById };
-  const actions = { fetchEvents, postEvents, deleteEvent, reset };
+  const actions = { fetchEvents, createEvent, deleteEvent, reset };
 
   return {
     ...values,
