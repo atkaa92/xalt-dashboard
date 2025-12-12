@@ -96,6 +96,7 @@ export const useEventsStore = defineStore('event', () => {
     loading.value = false;
     error.value = null;
   }
+
   // exported
   const values = { events, loading, error };
   const getters = { getEventById };

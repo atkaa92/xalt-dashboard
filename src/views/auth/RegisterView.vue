@@ -47,7 +47,12 @@
       :error="errors.confirmPassword"
     />
 
-    <BaseButton type="submit" class="w-full"> Register </BaseButton>
+    <BaseButton
+      type="submit"
+      class="w-full py-2 rounded bg-gray-500 text-white font-semibold hover:bg-yellowish transition"
+    >
+      Register
+    </BaseButton>
 
     <div class="text-center text-sm text-gray-400 mt-4">
       Already have an account?
@@ -59,13 +64,15 @@
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseInput from '@/components/ui/BaseInput.vue';
-import BaseSelect from '@/components/ui/BaseSelect.vue'; // Corrected import path based on file structure
+import BaseSelect from '@/components/ui/BaseSelect.vue';
 import { useToaster } from '@/composables/useToaster';
+import { useAuthStore } from '@/stores/auth';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const { addToasterItem } = useToaster();
+const authStore = useAuthStore();
 
 const form = reactive({
   firstname: '',
@@ -124,19 +131,28 @@ function validate() {
   return isValid;
 }
 
-function handleRegister() {
+async function handleRegister() {
   if (!validate()) {
     addToasterItem('Please check the form for errors.', 'error');
     return;
   }
 
-  // eslint-disable-next-line no-console
-  console.log('Register Data:', { ...form });
+  try {
+    await authStore.register({
+      firstName: form.firstname,
+      lastName: form.lastname,
+      email: form.email,
+      role: form.role,
+      password: form.password,
+    });
 
-  addToasterItem('Registration successful! Redirecting...', 'success');
+    addToasterItem('Registration successful! Redirecting to login...', 'success');
 
-  setTimeout(() => {
-    router.push({ name: 'login' });
-  }, 1500);
+    setTimeout(() => {
+      router.push({ name: 'login' });
+    }, 1500);
+  } catch {
+    addToasterItem(authStore.error || 'Registration failed', 'error');
+  }
 }
 </script>

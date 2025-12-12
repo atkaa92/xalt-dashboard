@@ -10,4 +10,9 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
+// Initialize auth store to restore session
+import { useAuthStore } from '@/stores/auth';
+const authStore = useAuthStore();
+authStore.initialize();
+
 app.mount('#app');

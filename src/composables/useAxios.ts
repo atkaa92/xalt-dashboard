@@ -1,8 +1,7 @@
+import axiosInstance from '@/utilities/axios';
 import type { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { ref } from 'vue';
-
-const BASE_URL = 'http://eurosport.localhost:5001';
 
 export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) {
   const data = ref<T | null>(null);
@@ -15,8 +14,8 @@ export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) 
     error.value = null;
 
     try {
-      const response = await axios.request<T>({
-        url: `${BASE_URL}${path}`,
+      const response = await axiosInstance.request<T>({
+        url: path,
         ...options,
       });
       data.value = response.data;
@@ -42,7 +41,7 @@ export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) 
     error.value = null;
 
     try {
-      const response = await axios.post<T>(`${BASE_URL}${path}`, body, { ...options, ...config });
+      const response = await axiosInstance.post<T>(path, body, { ...options, ...config });
       return response.data;
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -61,7 +60,7 @@ export function useAxios<T>(initialPath?: string, options?: AxiosRequestConfig) 
     error.value = null;
 
     try {
-      const response = await axios.delete<T>(`${BASE_URL}${path}`, {
+      const response = await axiosInstance.delete<T>(path, {
         ...options,
         ...config,
       });

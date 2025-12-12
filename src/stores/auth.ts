@@ -1,7 +1,18 @@
+import axiosInstance from '@/utilities/axios';
 import type { User } from '@/utilities/types';
+import axios from 'axios';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    user: User;
+  };
+}
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();
@@ -20,50 +31,82 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true;
     error.value = null;
 
-    // Simulating API call since there is no real backend for auth yet in the provided mocked files
-    // In a real scenario, use useAxios to post to /login
+    try {
+      const response = await axiosInstance.post<LoginResponse>('/api/user/auth', credentials);
 
-    return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        // Mock success
-        if (credentials.email) {
-          const mockUser = { id: 1, name: 'Test User', email: credentials.email };
-          user.value = mockUser as User;
-          token.value = 'mock-jwt-token';
-          localStorage.setItem('token', 'mock-jwt-token');
-          resolve();
-        } else {
-          error.value = 'Invalid credentials';
-          reject(new Error('Invalid credentials'));
-        }
-        loading.value = false;
-      }, 1000);
-    });
+      const { token: newToken, user: newUser } = response.data.data;
+
+      token.value = newToken;
+      user.value = newUser;
+
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(newUser));
+
+      return response.data;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        error.value = err.response?.data?.message || err.message;
+      } else {
+        error.value = (err as Error).message || 'Login failed';
+      }
+      throw err;
+    } finally {
+      loading.value = false;
+    }
   }
 
   function logout() {
     user.value = null;
     token.value = null;
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     router.push({ name: 'login' });
   }
 
   function initialize() {
     const storedToken = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+
     if (storedToken) {
       token.value = storedToken;
-      // Here we would typically fetch the user profile if the token exists
+    }
+
+    if (storedUser) {
+      try {
+        user.value = JSON.parse(storedUser);
+      } catch {
+        localStorage.removeItem('user');
+      }
     }
   }
 
+  async function register(userData: Record<string, string>) {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const response = await axiosInstance.post('/api/users', userData);
+      return response.data;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        error.value = err.response?.data?.message || err.message;
+      } else {
+        error.value = (err as Error).message || 'Registration failed';
+      }
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  // exported
+  const values = { user, token, loading, error };
+  const getters = { isAuthenticated };
+  const actions = { login, logout, initialize, register };
+
   return {
-    user,
-    token,
-    loading,
-    error,
-    isAuthenticated,
-    login,
-    logout,
-    initialize,
+    ...values,
+    ...getters,
+    ...actions,
   };
 });

@@ -18,8 +18,8 @@
     </div>
     <div class="flex items-center justify-end gap-3 relative">
       <div class="flex flex-col items-end leading-tight">
-        <span class="font-medium text-fg text-sm">Karen Margaryan</span>
-        <span class="text-xs text-muted">Admin</span>
+        <span class="font-medium text-fg text-sm">{{ userFullName }}</span>
+        <span class="text-xs text-muted">{{ userRole }}</span>
       </div>
 
       <button
@@ -58,8 +58,10 @@ import logo from '@/assets/logo.png';
 import { useHelpers } from '@/composables/useHelpers';
 import { useNavigation } from '@/composables/useNavigation';
 import { useTheme } from '@/composables/useTheme';
+import { useAuthStore } from '@/stores/auth';
 import type { Theme } from '@/utilities/types';
 import { Menu } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 defineEmits<{
   (e: 'toggle-sidebar'): void;
@@ -68,6 +70,15 @@ defineEmits<{
 const { setTheme, options } = useTheme();
 const { themeDropdownOpen, toggleThemeDropdown } = useNavigation();
 const { gmtTime } = useHelpers();
+const authStore = useAuthStore();
+
+const userFullName = computed(() => {
+  return authStore.user ? `${authStore.user.firstName} ${authStore.user.lastName}` : 'Guest User';
+});
+
+const userRole = computed(() => {
+  return authStore.user ? authStore.user.role : 'Guest';
+});
 
 const selectTheme = (t: Theme) => {
   setTheme(t);
