@@ -26,9 +26,9 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // clear token if it's invalid
-      // localStorage.removeItem('token');
-      // optional: redirect to login or handle via store
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/auth/login';
     }
     return Promise.reject(error);
   },

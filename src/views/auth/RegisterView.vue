@@ -62,9 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import BaseButton from '@/components/ui/BaseButton.vue';
-import BaseInput from '@/components/ui/BaseInput.vue';
-import BaseSelect from '@/components/ui/BaseSelect.vue';
+import { BaseButton, BaseInput, BaseSelect } from '@/components/ui';
 import { useToaster } from '@/composables/useToaster';
 import { useAuthStore } from '@/stores/auth';
 import { reactive } from 'vue';
