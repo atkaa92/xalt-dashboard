@@ -1,4 +1,4 @@
-import type { Theme, ThemeOption } from '@/utilities/types';
+import type { Theme, ThemeOption } from '@/types';
 import { onMounted, ref, watch } from 'vue';
 
 const STORAGE_KEY = 'ui-theme';

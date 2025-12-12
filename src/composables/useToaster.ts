@@ -1,5 +1,5 @@
 // composables/useToaster.ts
-import type { ToasterItem, ToastType } from '@/utilities/types';
+import type { ToasterItem, ToastType } from '@/types';
 import { ref } from 'vue';
 
 const toasterItems = ref<ToasterItem[]>([]);

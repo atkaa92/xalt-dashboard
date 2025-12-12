@@ -26,7 +26,7 @@
 import BaseButton from '@/components/ui/BaseButton.vue';
 import Table from '@/components/ui/Table.vue';
 import { useEventsStore } from '@/stores/event.ts';
-import type { Column } from '@/utilities/types';
+import type { Column } from '@/types';
 import { storeToRefs } from 'pinia';
 import { onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';

@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Overlay } from '@/utilities/types';
+import type { Overlay } from '@/types';
 import { computed, defineAsyncComponent, type Component } from 'vue';
 
 const props = defineProps<{ overlay: Overlay }>();

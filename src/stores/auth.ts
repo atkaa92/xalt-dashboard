@@ -1,18 +1,9 @@
+import type { LoginResponse, User } from '@/types';
 import axiosInstance from '@/utilities/axios';
-import type { User } from '@/utilities/types';
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
-
-interface LoginResponse {
-  success: boolean;
-  message: string;
-  data: {
-    token: string;
-    user: User;
-  };
-}
 
 export const useAuthStore = defineStore('auth', () => {
   const router = useRouter();

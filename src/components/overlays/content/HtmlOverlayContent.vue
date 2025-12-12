@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import type { HtmlContent } from '@/utilities/types';
+import type { HtmlContent } from '@/types';
 import { onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{

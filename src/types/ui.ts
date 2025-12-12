@@ -14,25 +14,6 @@ export interface NavItem {
   to: string;
 }
 
-export interface Event {
-  id: number;
-  userId: number;
-  name: string;
-  additionalAttributes?: Record<string, string>;
-}
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  phone?: string;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
-  subdomain?: string;
-  subdomainId?: number;
-}
-
 export interface Column {
   key: string;
   label: string;
@@ -42,6 +23,8 @@ export interface Column {
   noWrap?: boolean;
   align?: 'start' | 'center' | 'end';
 }
+
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 export interface ToasterItem {
   id: number;
@@ -63,6 +46,8 @@ export interface HtmlContent {
   combinedCode: string;
 }
 
+export type OverlayType = 'image' | 'video' | 'html';
+
 export interface Overlay {
   type: OverlayType | null;
   content: string | null;
@@ -75,10 +60,18 @@ export interface ContainerDimensions {
   height: number;
 }
 
-export type ToastType = 'success' | 'error' | 'info' | 'warning';
 export type Theme = 'light' | 'dark' | 'blue' | 'system';
 export type ThemeOption = { value: Theme; label: string };
-export type OverlayType = 'image' | 'video' | 'html';
+
+export interface Option {
+  label: string;
+  value: string | number;
+}
+
+export interface SortState {
+  key: string;
+  dir: 'asc' | 'desc';
+}
 
 export const DEFAULT_HTML_CONTENT: HtmlContent = {
   html: '<h1>Hello World!</h1>',

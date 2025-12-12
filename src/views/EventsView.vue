@@ -105,7 +105,7 @@ import Table from '@/components/ui/Table.vue';
 import { useModal } from '@/composables/useModal';
 import { useToaster } from '@/composables/useToaster';
 import { useEventsStore } from '@/stores/event.ts';
-import type { Column, Event } from '@/utilities/types';
+import type { Column, Event } from '@/types';
 import { LoaderCircle, Settings2, Trash } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
 import { ref } from 'vue';

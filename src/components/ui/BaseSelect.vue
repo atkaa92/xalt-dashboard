@@ -28,12 +28,8 @@
 </template>
 
 <script setup lang="ts">
+import type { Option } from '@/types';
 import { useAttrs } from 'vue';
-
-export interface Option {
-  label: string;
-  value: string | number;
-}
 
 const props = defineProps<{
   modelValue: string | number | null;

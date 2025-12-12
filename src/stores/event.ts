@@ -1,5 +1,5 @@
 import { useAxios } from '@/composables/useAxios';
-import type { Event } from '@/utilities/types';
+import type { Event } from '@/types';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';

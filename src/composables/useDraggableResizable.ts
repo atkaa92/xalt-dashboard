@@ -1,5 +1,5 @@
+import type { ContainerDimensions, OverlayStyle } from '@/types';
 import { onUnmounted, reactive, ref, type Ref } from 'vue';
-import type { ContainerDimensions, OverlayStyle } from '../utilities/types';
 
 export function useDraggableResizable(
   initialStyle: OverlayStyle,

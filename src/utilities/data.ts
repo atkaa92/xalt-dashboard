@@ -1,4 +1,4 @@
-import type { NavItem, ProjectItem } from '@/utilities/types';
+import type { NavItem, ProjectItem } from '@/types';
 import { CalendarCheck, Images, LayoutDashboard, UserRoundPen } from 'lucide-vue-next';
 
 export const navItems: NavItem[] = [

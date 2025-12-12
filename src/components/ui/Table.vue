@@ -108,13 +108,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Column } from '@/utilities/types';
+import type { Column, SortState } from '@/types';
 import { computed, reactive } from 'vue';
-
-interface SortState {
-  key: string;
-  dir: 'asc' | 'desc';
-}
 
 interface TableProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

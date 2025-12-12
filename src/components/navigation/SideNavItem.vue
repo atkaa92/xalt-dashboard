@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { useNavigation } from '@/composables/useNavigation';
-import type { NavItem } from '@/utilities/types';
+import type { NavItem } from '@/types';
 import { useRoute } from 'vue-router';
 
 defineProps<{

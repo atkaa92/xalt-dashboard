@@ -122,13 +122,7 @@ import VideoOverlayForm from '@/components/overlays/forms/VideoOverlayForm.vue';
 import OverlayContentRenderer from '@/components/overlays/OverlayContentRenderer.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseInput from '@/components/ui/BaseInput.vue';
-import type {
-  ContainerDimensions,
-  HtmlContent,
-  Overlay,
-  OverlayStyle,
-  OverlayType,
-} from '@/utilities/types';
+import type { ContainerDimensions, HtmlContent, Overlay, OverlayStyle, OverlayType } from '@/types';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 // --- State ---

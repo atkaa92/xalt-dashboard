@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { useDraggableResizable } from '@/composables/useDraggableResizable';
-import type { ContainerDimensions, Overlay, OverlayStyle } from '@/utilities/types';
+import type { ContainerDimensions, Overlay, OverlayStyle } from '@/types';
 import type { StyleValue } from 'vue';
 import { computed, watch } from 'vue';
 

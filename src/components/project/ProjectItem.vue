@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useToaster } from '@/composables/useToaster';
-import type { ProjectItem } from '@/utilities/types';
+import type { ProjectItem } from '@/types';
 import { Copy } from 'lucide-vue-next';
 
 defineProps<{

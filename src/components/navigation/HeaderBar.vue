@@ -59,7 +59,7 @@ import { useHelpers } from '@/composables/useHelpers';
 import { useNavigation } from '@/composables/useNavigation';
 import { useTheme } from '@/composables/useTheme';
 import { useAuthStore } from '@/stores/auth';
-import type { Theme } from '@/utilities/types';
+import type { Theme } from '@/types';
 import { Menu } from 'lucide-vue-next';
 import { computed } from 'vue';
 
