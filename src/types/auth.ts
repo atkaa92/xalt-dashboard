@@ -18,3 +18,19 @@ export interface LoginResponse {
     user: User;
   };
 }
+
+export interface UpdateProfileRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role?: string;
+  confirmPassword?: string;
+  [key: string]: string | undefined;
+}

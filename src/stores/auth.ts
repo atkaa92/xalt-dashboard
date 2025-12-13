@@ -1,4 +1,4 @@
-import type { LoginResponse, User } from '@/types';
+import type { LoginResponse, RegisterRequest, UpdateProfileRequest, User } from '@/types';
 import axiosInstance from '@/utilities/axios';
 import axios from 'axios';
 import { defineStore } from 'pinia';
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  async function register(userData: Record<string, string>) {
+  async function register(userData: RegisterRequest) {
     loading.value = true;
     error.value = null;
 
@@ -90,10 +90,42 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function updateProfile(userData: UpdateProfileRequest) {
+    loading.value = true;
+    error.value = null;
+
+    if (!user.value) {
+      error.value = 'No user logged in';
+      loading.value = false;
+      throw new Error('No user logged in');
+    }
+
+    try {
+      const response = await axiosInstance.put(`/api/users/${user.value.id}`, userData);
+
+      // Update user data in store and localStorage
+      if (response.data.data) {
+        user.value = { ...user.value, ...response.data.data };
+        localStorage.setItem('user', JSON.stringify(user.value));
+      }
+
+      return response.data;
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        error.value = err.response?.data?.message || err.message;
+      } else {
+        error.value = (err as Error).message || 'Profile update failed';
+      }
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // exported
   const values = { user, token, loading, error };
   const getters = { isAuthenticated };
-  const actions = { login, logout, initialize, register };
+  const actions = { login, logout, initialize, register, updateProfile };
 
   return {
     ...values,
