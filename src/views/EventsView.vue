@@ -41,81 +41,27 @@
   </Table>
 
   <!-- Add Event Modal -->
-  <BaseModal v-model="isAddOpen" :close-on-esc="true" :close-on-backdrop="true" title="Add Event">
-    <div>
-      <BaseInput v-model="name" label="Name" type="text" />
-    </div>
-    <template #footer>
-      <BaseButton
-        class="border border-gray-500 bg-transparent text-gray-200 hover:bg-gray-700"
-        @click="closeAdd"
-      >
-        Cancel
-      </BaseButton>
-      <BaseButton
-        class="bg-blue-600 text-white hover:bg-blue-500 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-blue-600"
-        :disabled="loading"
-        @click="handleAddEvent"
-      >
-        <LoaderCircle v-if="loading" class="animate-spin" />
-        Confirm
-      </BaseButton>
-    </template>
-  </BaseModal>
+  <AddEventModal v-model="isAddOpen" @success="store.fetchEvents()" />
 
   <!-- Delete Event Modal -->
-  <BaseModal
-    v-model="isDeleteOpen"
-    :close-on-esc="true"
-    :close-on-backdrop="true"
-    title="Delete Event"
-  >
-    <div class="text-gray-200">
-      Are you sure you want to delete
-      <span v-if="eventToDelete" class="font-semibold text-red-400">
-        {{ eventToDelete.name }}
-      </span>
-      ?
-    </div>
-
-    <template #footer>
-      <button
-        class="rounded-lg border border-gray-500 px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
-        @click="closeDelete"
-      >
-        Cancel
-      </button>
-      <button
-        class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-600"
-        :disabled="loading"
-        @click="handleDeleteEvent"
-      >
-        <LoaderCircle v-if="loading" class="animate-spin" />
-        Confirm
-      </button>
-    </template>
-  </BaseModal>
+  <DeleteEventModal v-model="isDeleteOpen" :event="eventToDelete" @success="store.fetchEvents()" />
 </template>
 
 <script setup lang="ts">
+import AddEventModal from '@/components/modals/AddEventModal.vue';
+import DeleteEventModal from '@/components/modals/DeleteEventModal.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
-import BaseInput from '@/components/ui/BaseInput.vue';
-import BaseModal from '@/components/ui/BaseModal.vue';
 import Table from '@/components/ui/Table.vue';
 import { useModal } from '@/composables/useModal';
-import { useToaster } from '@/composables/useToaster';
 import { useEventsStore } from '@/stores/event.ts';
 import type { Column, Event } from '@/types';
-import { LoaderCircle, Settings2, Trash } from 'lucide-vue-next';
+import { Settings2, Trash } from 'lucide-vue-next';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-
-const { addToasterItem } = useToaster();
+import { onMounted, onUnmounted, ref } from 'vue';
 const store = useEventsStore();
 const { events, loading, error } = storeToRefs(store);
-const { isOpen: isAddOpen, open: openAdd, close: closeAdd } = useModal();
-const { isOpen: isDeleteOpen, open: openDelete, close: closeDelete } = useModal();
-const name = ref('');
+const { isOpen: isAddOpen, open: openAdd } = useModal();
+const { isOpen: isDeleteOpen, open: openDelete } = useModal();
 const eventToDelete = ref<Event | null>(null);
 const columns: Column[] = [
   {
@@ -128,30 +74,6 @@ const columns: Column[] = [
   { key: 'actions', label: '', width: '65%' },
 ];
 
-const handleAddEvent = async () => {
-  try {
-    const payload = {
-      name: name.value,
-      additionalAttributes: {
-        theme: 'Tropical',
-        maxGuests: '500',
-      },
-    };
-
-    await store.createEvent(payload);
-
-    if (error.value) {
-      throw new Error(error.value);
-    }
-
-    name.value = '';
-    addToasterItem('Event has been added successfully.', 'success');
-    closeAdd();
-  } catch (err) {
-    addToasterItem((err as Error).message || 'Failed to add event', 'error');
-  }
-};
-
 const openDeleteEvent = (row: unknown) => {
   if (!row || typeof row !== 'object') return;
   const event = row as Event;
@@ -159,14 +81,6 @@ const openDeleteEvent = (row: unknown) => {
   openDelete();
 };
 
-const handleDeleteEvent = async () => {
-  if (!eventToDelete.value) return;
-  await store.deleteEvent(eventToDelete.value.id);
-  eventToDelete.value = null;
-  closeDelete();
-  addToasterItem('Event has been deleted successfully.', 'success');
-};
-
-// onMounted(() => store.fetchEvents());
-// onUnmounted(() => store.reset());
+onMounted(() => store.fetchEvents());
+onUnmounted(() => store.reset());
 </script>

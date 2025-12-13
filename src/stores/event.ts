@@ -1,5 +1,5 @@
 import { useAxios } from '@/composables/useAxios';
-import type { Event } from '@/types';
+import type { ApiResponse, Event } from '@/types';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { useAuthStore } from './auth';
@@ -18,14 +18,14 @@ export const useEventsStore = defineStore('event', () => {
     loading.value = true;
     error.value = null;
 
-    const req = useAxios<Event[]>('/users');
+    const req = useAxios<ApiResponse<Event[]>>('/api/events');
     await req.fetchData();
 
     if (req.error.value) {
       error.value = req.error.value;
       events.value = [];
     } else {
-      events.value = (req.data.value ?? []) as Event[];
+      events.value = req.data.value?.data ?? [];
     }
 
     loading.value = false;
@@ -79,8 +79,8 @@ export const useEventsStore = defineStore('event', () => {
     loading.value = true;
     error.value = null;
 
-    const req = useAxios<Event[]>();
-    await req.deleteData(`/users/${id}`);
+    const req = useAxios<ApiResponse<Event[]>>();
+    await req.deleteData(`/api/events/${id}`);
 
     if (req.error.value) {
       error.value = req.error.value;
