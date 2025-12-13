@@ -9,17 +9,17 @@ import type { RouteRecordRaw } from 'vue-router';
 export const dashboardRoutes: RouteRecordRaw = {
   path: '/',
   component: DefaultLayout,
-  meta: { requiresAuth: true },
   children: [
     {
       path: '',
       name: 'dashboard',
       component: DashboardView,
       alias: ['/dashboard', '/home'],
+      meta: { requiresAuth: true },
     },
-    { path: 'events', name: 'events', component: EventsView },
-    { path: 'assets', name: 'assets', component: AssetsView },
+    { path: 'events', name: 'events', component: EventsView, meta: { requiresAuth: true } },
+    { path: 'assets', name: 'assets', component: AssetsView, meta: { requiresAuth: true } },
     { path: 'add-assets', name: 'addAssets', component: AssetsAddView },
-    { path: 'profile', name: 'profile', component: ProfileView },
+    { path: 'profile', name: 'profile', component: ProfileView, meta: { requiresAuth: true } },
   ],
 };
