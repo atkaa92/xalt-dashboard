@@ -5,12 +5,12 @@
   >
     Add Asset
   </BaseButton>
-  <div v-if="loading">Loading events...</div>
+  <div v-if="loading">Loading assets...</div>
   <div v-else-if="error" class="text-red-500">{{ error }}</div>
   <Table
-    v-if="events.length"
+    v-if="assets?.length"
     :columns="columns"
-    :rows="events"
+    :rows="assets"
     :initial-sort="{ key: 'id', dir: 'asc' }"
     row-key-field="id"
   >
@@ -19,20 +19,27 @@
         <span class="font-medium capitalize">ID: {{ row.id }}</span>
       </div>
     </template>
+    <template #cell:type="{ row }">
+      {{ row.attributes?.type }}
+    </template>
+    <template #cell:createdAt="{ row }">
+      {{ new Date(row.createdAt).toLocaleDateString() }}
+    </template>
   </Table>
 </template>
 
 <script setup lang="ts">
 import BaseButton from '@/components/ui/BaseButton.vue';
 import Table from '@/components/ui/Table.vue';
-import { useEventsStore } from '@/stores/event.ts';
+import { useAssetStore } from '@/stores/asset';
 import type { Column } from '@/types';
 import { storeToRefs } from 'pinia';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-const store = useEventsStore();
+
+const store = useAssetStore();
 const router = useRouter();
-const { events, loading, error } = storeToRefs(store);
+const { assets, loading, error } = storeToRefs(store);
 
 const columns: Column[] = [
   {
@@ -41,14 +48,14 @@ const columns: Column[] = [
     align: 'start',
     noWrap: true,
   },
-  { key: 'title', label: 'Name', width: '65%' },
-  { key: 'userId', label: 'User_ID', width: '5%', align: 'center' },
+  { key: 'name', label: 'Name', width: '55%' },
+  { key: 'type', label: 'Type', width: '10%', align: 'center' },
+  { key: 'createdAt', label: 'Created At', width: '20%', align: 'center' },
 ];
 
 const handleAddAsset = async () => {
   router.push('/add-assets');
 };
 
-onMounted(() => store.fetchEvents());
-onUnmounted(() => store.reset());
+onMounted(() => store.fetchAssets());
 </script>

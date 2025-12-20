@@ -6,6 +6,15 @@
         <h3 class="mb-6 text-lg font-semibold text-fg">✨ Create New Overlay</h3>
 
         <div class="mb-6">
+          <BaseInput
+            label="Asset Name"
+            placeholder="Enter asset name"
+            v-model="assetName"
+            :error="nameError"
+          />
+        </div>
+
+        <div class="mb-6">
           <label for="overlay-selector" class="mb-2 block text-sm font-medium text-fg">
             Select Overlay Type
           </label>
@@ -122,13 +131,18 @@ import VideoOverlayForm from '@/components/overlays/forms/VideoOverlayForm.vue';
 import OverlayContentRenderer from '@/components/overlays/OverlayContentRenderer.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import BaseInput from '@/components/ui/BaseInput.vue';
+import { useToaster } from '@/composables/useToaster';
 import type { ContainerDimensions, HtmlContent, Overlay, OverlayStyle, OverlayType } from '@/types';
+import { handleFileUpload } from '@/utilities/upload';
 import { computed, onMounted, reactive, ref } from 'vue';
 
 // --- State ---
 const previewContainer = ref<HTMLDivElement | null>(null);
 const defaultSize = 30;
 const selectedType = ref<OverlayType | null>(null); // Controls which form is visible
+const selectedFile = ref<File | null>(null); // Store the raw file for upload
+const assetName = ref('');
+const nameError = ref<string | undefined>(undefined);
 const overlay: Overlay = reactive({
   type: null,
   content: null,
@@ -144,6 +158,14 @@ const containerDimensions: ContainerDimensions = reactive({
   width: 0,
   height: 0,
 });
+
+// --- Stores ---
+import { useAssetStore } from '@/stores/asset';
+import { useAuthStore } from '@/stores/auth';
+
+const assetStore = useAssetStore();
+const authStore = useAuthStore();
+const { addToasterItem } = useToaster();
 
 // --- Computed Inputs ---
 const overlayWidth = computed<number>({
@@ -190,6 +212,7 @@ const handleOverlayCreation = (payload: {
   type: OverlayType;
   content: string;
   htmlContent?: HtmlContent;
+  file?: File;
 }) => {
   if (payload.type !== selectedType.value) return;
 
@@ -200,25 +223,68 @@ const handleOverlayCreation = (payload: {
   if (payload.type === 'html' && payload.htmlContent) {
     Object.assign(overlay.htmlContent, payload.htmlContent);
   }
+
+  // If Image or Video, store the file for upload
+  if ((payload.type === 'image' || payload.type === 'video') && payload.file) {
+    selectedFile.value = payload.file;
+  }
 };
 
 const updateOverlayStyle = (newStyles: Partial<OverlayStyle>) => {
   Object.assign(overlay.style, newStyles);
 };
 
-const saveOverlay = () => {
+const saveOverlay = async () => {
   if (!overlay.type) return;
 
-  const payload = {
-    type: overlay.type,
-    content: overlay.content,
-    style: { ...overlay.style },
-    htmlContent: overlay.type === 'html' ? { ...overlay.htmlContent } : undefined,
-    containerDimensions: { ...containerDimensions },
-  };
+  nameError.value = undefined;
+  if (!assetName.value.trim()) {
+    nameError.value = 'Asset name is required';
+    return;
+  }
 
-  // eslint-disable-next-line no-console
-  console.log('📦 Overlay Save Payload:', payload);
+  const subdomainId = authStore.user?.subdomainId;
+  if (!subdomainId) {
+    // eslint-disable-next-line no-console
+    console.error('No subdomain ID found for user');
+    return;
+  }
+
+  try {
+    let contentUrl = overlay.content;
+
+    // If we have a file selected (for image/video type), upload it first
+    if ((overlay.type === 'image' || overlay.type === 'video') && selectedFile.value) {
+      if (!authStore.user?.subdomainId) {
+        throw new Error('User subdomain not found');
+      }
+      addToasterItem('Uploading media to S3...', 'info');
+      // Upload returns the final publicly accessible URL
+      contentUrl = await handleFileUpload(selectedFile.value);
+    }
+
+    const attributes = {
+      type: overlay.type,
+      content: contentUrl,
+      style: { ...overlay.style },
+      htmlContent: overlay.type === 'html' ? { ...overlay.htmlContent } : undefined,
+      containerDimensions: { ...containerDimensions },
+    };
+
+    await assetStore.createAsset({
+      subdomainId,
+      name: assetName.value,
+      attributes,
+    });
+    addToasterItem('Asset created successfully', 'success');
+    resetOverlay();
+    assetName.value = '';
+    selectedType.value = null;
+    selectedFile.value = null; // Clear file after success
+  } catch (err: unknown) {
+    const message = (err as Error).message || assetStore.error || 'Failed to create asset';
+    addToasterItem(message, 'error');
+  }
 };
 
 const resetOverlay = () => {

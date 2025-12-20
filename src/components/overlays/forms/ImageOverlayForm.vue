@@ -30,7 +30,7 @@ import { ref } from 'vue';
 defineProps<{ isActive: boolean }>();
 
 const emit = defineEmits<{
-  (e: 'overlayCreated', payload: { type: 'image'; content: string }): void;
+  (e: 'overlayCreated', payload: { type: 'image'; content: string; file: File }): void;
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -53,7 +53,7 @@ const handleDrop = (event: DragEvent) => {
 const processFile = (file: File) => {
   const reader = new FileReader();
   reader.onloadend = () => {
-    emit('overlayCreated', { type: 'image', content: reader.result as string });
+    emit('overlayCreated', { type: 'image', content: reader.result as string, file });
   };
   reader.readAsDataURL(file);
 };

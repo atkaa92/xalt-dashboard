@@ -31,7 +31,7 @@ import { ref } from 'vue';
 defineProps<{ isActive: boolean }>();
 
 const emit = defineEmits<{
-  (e: 'overlayCreated', payload: { type: 'video'; content: string }): void;
+  (e: 'overlayCreated', payload: { type: 'video'; content: string; file: File }): void;
 }>();
 
 const videoFileInput = ref<HTMLInputElement | null>(null);
@@ -42,13 +42,22 @@ const openVideoFileInput = () => {
 
 const handleVideoFileChange = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0];
-  if (file && file.type.startsWith('video/')) processFile(file);
+  if (!file) return;
+
+  const maxSizeInBytes = 10 * 1024 * 1024; // 10MB limit
+  if (file.size > maxSizeInBytes) {
+    alert('File is too large. Please select a video under 10MB.');
+    (event.target as HTMLInputElement).value = ''; // Clear input
+    return;
+  }
+
+  if (file.type.startsWith('video/')) processFile(file);
 };
 
 const processFile = (file: File) => {
   const reader = new FileReader();
   reader.onloadend = () => {
-    emit('overlayCreated', { type: 'video', content: reader.result as string });
+    emit('overlayCreated', { type: 'video', content: reader.result as string, file });
   };
   reader.readAsDataURL(file);
 };
